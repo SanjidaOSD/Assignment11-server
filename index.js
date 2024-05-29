@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -37,12 +37,23 @@ async function run() {
     const foodCollection = client.db('FoodDB').collection('food');
 
 
-// get details id:
+    // get details from db:
     app.get('/food/:id', async (req, res) => {
-      const id = req.params.id;
+      const  id  = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await foodCollection.findOne(query);
       res.send(result);
+    })
+
+    // my manage food:
+    app.get('/food', async (req, res) => {
+      // console.log(req.query.email);
+      let query = {};
+      if(req.query.email){
+        query = {"newFood.email": req.query.email}
+      }
+      const result = await foodCollection.find(query).toArray();
+      res.send(result)
     })
 
     // get food
@@ -63,14 +74,6 @@ async function run() {
 
 
 
-
-    // app.get('/food/:id', async(req , res) =>{
-    // const {id} = req.params
-    // const query = {_id: new ObjectId(id)}
-    // const result = await foodCollection.findOne(query);
-    // res.send(result)
-    // })
-
     // app.get('/myList/:email', async(req , res) =>{
     //   const {email} = req.params
     //   const query = {email: email}
@@ -88,13 +91,7 @@ async function run() {
     //  })
 
 
-    // save a food
-    app.post('/food', async (req, res) => {
-      const newFood = req.body;
-      console.log(newFood)
-      const result = await foodCollection.insertOne(newFood);
-      res.send(result)
-    })
+
 
 
     await client.db("admin").command({ ping: 1 });
