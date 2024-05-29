@@ -7,14 +7,15 @@ const port = process.env.PORT || 5000;
 
 
 // middleware 
-const corsOption = {
-    origin: ['http://localhost:5173/'],
-    credentials: true,
-    optionSuccessStatus: 200,
+// 
+const corsConfig = {
+  origin: ['http://localhost:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 }
+app.use(cors(corsConfig));
 
-
-app.use(cors(corsOption));
+// app.use(cors(corsOption));
 app.use(express.json());
 
 console.log(process.env.DB_PASS)
@@ -33,9 +34,58 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+    const foodCollection = client.db('FoodDB').collection('food');
 
-    // Send a ping to confirm a successful connection
+
+    // app.get('/food',async(req, res) => {
+    //   const cursor = foodCollection.find();
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // })
+    
+    // save a food
+    app.post('/food', async(req, res) => {
+      const newFood = req.body;
+      console.log(newFood)
+      const result = await foodCollection.insertOne(newFood);
+      res.send(result)
+    })
+
+
+
+    // app.get('/food/:id', async(req , res) =>{
+    // const {id} = req.params
+    // const query = {_id: new ObjectId(id)}
+    // const result = await foodCollection.findOne(query);
+    // res.send(result)
+    // })
+    
+    // app.get('/myList/:email', async(req , res) =>{
+    //   const {email} = req.params
+    //   const query = {email: email}
+    //   console.log(query)
+    //   const result = await placeCollection.find(query).toArray();
+    //   console.log(result)
+    //   res.send(result)
+    //   })
+    
+      // app.delete('/place/:id', async (req, res) =>{
+      //   const {id} = req.params
+      //   const query = {_id: new ObjectId(id)}
+      //   const result = await placeCollection.deleteOne(query);
+      //   res.send(result) 
+      //  })
+    
+
+      // save a food
+    app.post('/food', async(req, res) => {
+      const newFood = req.body;
+      console.log(newFood)
+      const result = await foodCollection.insertOne(newFood);
+      res.send(result)
+    })
+
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
@@ -50,6 +100,10 @@ app.get('/',(req, res) =>{
     res.send('assignment11 is running.....')
 
 })
+
+
+
+
 
 
 app.listen(port, () =>{
