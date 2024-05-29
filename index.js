@@ -37,19 +37,30 @@ async function run() {
     const foodCollection = client.db('FoodDB').collection('food');
 
 
-    // app.get('/food',async(req, res) => {
-    //   const cursor = foodCollection.find();
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // })
-    
+// get details id:
+    app.get('/food/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await foodCollection.findOne(query);
+      res.send(result);
+    })
+
+    // get food
+    app.get('/food', async (req, res) => {
+      const cursor = foodCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
     // save a food
-    app.post('/food', async(req, res) => {
+    app.post('/food', async (req, res) => {
       const newFood = req.body;
       console.log(newFood)
       const result = await foodCollection.insertOne(newFood);
       res.send(result)
     })
+
+
 
 
 
@@ -59,7 +70,7 @@ async function run() {
     // const result = await foodCollection.findOne(query);
     // res.send(result)
     // })
-    
+
     // app.get('/myList/:email', async(req , res) =>{
     //   const {email} = req.params
     //   const query = {email: email}
@@ -68,17 +79,17 @@ async function run() {
     //   console.log(result)
     //   res.send(result)
     //   })
-    
-      // app.delete('/place/:id', async (req, res) =>{
-      //   const {id} = req.params
-      //   const query = {_id: new ObjectId(id)}
-      //   const result = await placeCollection.deleteOne(query);
-      //   res.send(result) 
-      //  })
-    
 
-      // save a food
-    app.post('/food', async(req, res) => {
+    // app.delete('/place/:id', async (req, res) =>{
+    //   const {id} = req.params
+    //   const query = {_id: new ObjectId(id)}
+    //   const result = await placeCollection.deleteOne(query);
+    //   res.send(result) 
+    //  })
+
+
+    // save a food
+    app.post('/food', async (req, res) => {
       const newFood = req.body;
       console.log(newFood)
       const result = await foodCollection.insertOne(newFood);
@@ -96,8 +107,8 @@ run().catch(console.dir);
 
 
 
-app.get('/',(req, res) =>{
-    res.send('assignment11 is running.....')
+app.get('/', (req, res) => {
+  res.send('assignment11 is running.....')
 
 })
 
@@ -106,6 +117,6 @@ app.get('/',(req, res) =>{
 
 
 
-app.listen(port, () =>{
-    console.log(`assignment11 is not complete ${port}`)
+app.listen(port, () => {
+  console.log(`assignment11 is not complete ${port}`)
 })
