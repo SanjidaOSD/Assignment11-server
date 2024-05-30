@@ -64,10 +64,19 @@ async function run() {
 
     // sort db:
     app.get('/food', async (req, res) => {
-      const sort = req.query.sort;
+      const sort = req.query.sort
+      const search = req.query.search
+      let query = {}
+if(search){
+  query.foodName = {$regex : new RegExp(search, 'i')}
+
+}
       let options = {};
-      if (sort) options = { short: { expireDate: sort === 'asc' ? 1 : -1 } };
-      const result = await foodCollection.find().sort(options).toArray();
+      if (sort) options = {sort: {expiredDate : sort === 'asc'? 1: -1}};
+      
+      const result = await foodCollection
+      .find(query, options)
+      .toArray();
       res.send(result);
     })
 
