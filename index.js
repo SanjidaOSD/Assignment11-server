@@ -36,7 +36,7 @@ async function run() {
   try {
     const foodCollection = client.db('FoodDB').collection('food');
 
-    // Update file db:
+    // data query kora:
     app.get('/food/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
@@ -44,6 +44,32 @@ async function run() {
       res.send(result)
     })
 
+    // update db:
+    app.put('/food/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedFood = req.body;
+      food = {
+        $set: {
+          foodName: updatedFood.foodName,
+          pickupLocation: updatedFood.pickupLocation,
+          expiredDate: updatedFood.expiredDate,
+          foodImg: updatedFood.foodImg
+        }
+      }
+      const result = await foodCollection.updateOne(filter, food, options)
+      res.send(result);
+    })
+
+    // sort db:
+    app.get('/food', async (req, res) => {
+      const sort = req.query.sort;
+      let options = {};
+      if (sort) options = { short: { expireDate: sort === 'asc' ? 1 : -1 } };
+      const result = await foodCollection.find().sort(options).toArray();
+      res.send(result);
+    })
 
     // get details from db:
     app.get('/food/:id', async (req, res) => {
