@@ -36,10 +36,18 @@ async function run() {
   try {
     const foodCollection = client.db('FoodDB').collection('food');
 
+    // Update file db:
+    app.get('/food/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await foodCollection.findOne(query);
+      res.send(result)
+    })
+
 
     // get details from db:
     app.get('/food/:id', async (req, res) => {
-      const  id  = req.params.id;
+      const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await foodCollection.findOne(query);
       res.send(result);
@@ -49,8 +57,8 @@ async function run() {
     app.get('/food', async (req, res) => {
       // console.log(req.query.email);
       let query = {};
-      if(req.query.email){
-        query = {"newFood.email": req.query.email}
+      if (req.query.email) {
+        query = { "newFood.email": req.query.email }
       }
       const result = await foodCollection.find(query).toArray();
       res.send(result)
@@ -70,25 +78,18 @@ async function run() {
       const result = await foodCollection.insertOne(newFood);
       res.send(result)
     })
+    // Delete data:
+    app.delete('/food/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await foodCollection.deleteOne(query);
+      res.send(result)
+    })
 
 
 
 
-    // app.get('/myList/:email', async(req , res) =>{
-    //   const {email} = req.params
-    //   const query = {email: email}
-    //   console.log(query)
-    //   const result = await placeCollection.find(query).toArray();
-    //   console.log(result)
-    //   res.send(result)
-    //   })
 
-    // app.delete('/place/:id', async (req, res) =>{
-    //   const {id} = req.params
-    //   const query = {_id: new ObjectId(id)}
-    //   const result = await placeCollection.deleteOne(query);
-    //   res.send(result) 
-    //  })
 
 
 
