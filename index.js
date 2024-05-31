@@ -35,6 +35,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const foodCollection = client.db('FoodDB').collection('food');
+    const requestCollection = client.db("FoodDB").collection('request');
 
     // data query kora:
     app.get('/food/:id', async (req, res) => {
@@ -67,16 +68,16 @@ async function run() {
       const sort = req.query.sort
       const search = req.query.search
       let query = {}
-if(search){
-  query.foodName = {$regex : new RegExp(search, 'i')}
+      if (search) {
+        query.foodName = { $regex: new RegExp(search, 'i') }
 
-}
+      }
       let options = {};
-      if (sort) options = {sort: {expiredDate : sort === 'asc'? 1: -1}};
-      
+      if (sort) options = { sort: { expiredDate: sort === 'asc' ? 1 : -1 } };
+
       const result = await foodCollection
-      .find(query, options)
-      .toArray();
+        .find(query, options)
+        .toArray();
       res.send(result);
     })
 
@@ -122,8 +123,24 @@ if(search){
     })
 
 
+    // get all request data for a email from db:
 
+    app.get('/request/:email', async (req, res) => {
+      const email = req.params.email
+      const query = { email }
+      // console.log(email)
+      const result = await requestCollection.find().toArray()
+      console.log(result)
 
+      // res.send(result)
+    })
+
+// save request data in db:
+app.post('/request',async(req, res)=>{
+  const requestData = req.body
+  const result = await requestCollection.insertOne(requestData)
+  res.send(result)
+})
 
 
 
