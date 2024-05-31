@@ -63,23 +63,21 @@ async function run() {
       res.send(result);
     })
 
-    // sort db:
-    app.get('/food', async (req, res) => {
-      const sort = req.query.sort
-      const search = req.query.search
-      let query = {}
-      if (search) {
-        query.foodName = { $regex: new RegExp(search, 'i') }
+    // sort search db:
+    // app.get('/food', async (req, res) => {
+    //   const sort = req.query.sort
+    //   const search = req.query.search || '';
+    //   let query = {
+    //     foodName: { $regex: search, $options: 'i' }      };
+      
+    //   let options = {};
+    //   if (sort) options = { sort: { expiredDate: sort === 'asc' ? 1 : -1 } };
 
-      }
-      let options = {};
-      if (sort) options = { sort: { expiredDate: sort === 'asc' ? 1 : -1 } };
-
-      const result = await foodCollection
-        .find(query, options)
-        .toArray();
-      res.send(result);
-    })
+    //   const result = await foodCollection
+    //     .find(query, options)
+    //     .toArray();
+    //   res.send(result);
+    // })
 
     // get details from db:
     app.get('/food/:id', async (req, res) => {
@@ -132,7 +130,7 @@ async function run() {
       const result = await requestCollection.find().toArray()
       console.log(result)
 
-      // res.send(result)
+      res.send(result)
     })
 
 // save request data in db:
